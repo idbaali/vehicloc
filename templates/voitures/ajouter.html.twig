@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Ajouter une voiture - VehiLoc
+{% endblock %}
+
+{% block body %}
+    <main class="add-car-page">
+        <div class="container">
+            <h1>Ajouter une voiture</h1>
+
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-error">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {{ form_start(form) }}
+
+    {{ form_errors(form) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.dailyPrice) }}
+    {{ form_row(form.monthlyPrice) }}
+    {{ form_row(form.places) }}
+    {{ form_row(form.motor) }}
+    {{ form_row(form.image) }}
+
+    <button type="submit">
+        Ajouter la voiture
+    </button>
+
+{{ form_end(form) }}
+        </div>
+    </main>
+{% endblock %}

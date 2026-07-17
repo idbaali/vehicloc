@@ -45,35 +45,44 @@
         {% for voiture in voitures %}
             <article>
                 <div class="mini-car-title">
-                    <a href="{{ path('app_voiture_detail', {
-                        id: voiture.id
-                    }) }}">
+                    <a href="{{ path('app_voiture_detail', {id: voiture.id}) }}">
                         <h3>{{ voiture.name }}</h3>
                         <p>ou similaire | Saint-Étienne</p>
                     </a>
 
-                    <div>
-                        <form
-                            method="post"
-                            action="{{ path('app_voiture_supprimer', {
-                                id: voiture.id
-                            }) }}"
+                    <form
+                        method="post"
+                        action="{{ path('app_voiture_supprimer', {id: voiture.id}) }}"
+                        onsubmit="return confirm('Voulez-vous vraiment supprimer cette voiture ?');"
+                    >
+                        <input
+                            type="hidden"
+                            name="_token"
+                            value="{{ csrf_token('supprimer' ~ voiture.id) }}"
                         >
-                            <input
-                                type="hidden"
-                                name="_token"
-                                value="{{ csrf_token('delete' ~ voiture.id) }}"
-                            >
 
-                            <button type="submit" class="delete-button">
-                                <img
-                                    src="{{ asset('icons/trash.png') }}"
-                                    alt="Supprimer"
-                                >
-                            </button>
-                        </form>
-                    </div>
+                        <button
+                            type="submit"
+                            class="delete-button"
+                            aria-label="Supprimer {{ voiture.name }}"
+                        >
+                            <img
+                                src="{{ asset('icons/trash.png') }}"
+                                alt="Supprimer"
+                            >
+                        </button>
+                    </form>
                 </div>
+
+                {% if voiture.image %}
+                    <a href="{{ path('app_voiture_detail', {id: voiture.id}) }}">
+                        <img
+                            src="{{ asset('uploads/voitures/' ~ voiture.image) }}"
+                            alt="{{ voiture.name }}"
+                            class="mini-car-image"
+                        >
+                    </a>
+                {% endif %}
 
                 <div class="mini-car-icons">
                     <div>
@@ -95,7 +104,7 @@
                     <div>
                         <img
                             src="{{ asset('icons/km.png') }}"
-                            alt="Km illimités"
+                            alt="Kilométrage illimité"
                         >
                         <p>Km illimités</p>
                     </div>
@@ -103,7 +112,7 @@
                     <div>
                         <img
                             src="{{ asset('icons/plus.png') }}"
-                            alt="Plus"
+                            alt="Plus d'informations"
                         >
                         <p>Plus</p>
                     </div>
@@ -134,7 +143,7 @@
         <div class="promise">
             <img
                 src="{{ asset('icons/insurance.png') }}"
-                alt="Assurance et Assistance"
+                alt="Assurance et assistance"
             >
 
             <div class="promise-text">
