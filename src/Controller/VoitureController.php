@@ -7,66 +7,40 @@ use App\Form\VoitureType;
 use App\Repository\VoitureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
-final class VoitureController extends AbstractController
+class VoitureController extends AbstractController
 {
-    #[Route('/', name: 'app_accueil')]
-    public function accueil(VoitureRepository $voitureRepository): Response
-    {
+    #[Route('/', name: 'app_accueil', methods: ['GET'])]
+    public function accueil(
+        VoitureRepository $voitureRepository
+    ): Response {
         return $this->render('voitures/accueil.html.twig', [
             'voitures' => $voitureRepository->findAll(),
         ]);
     }
 
-    #[Route('/voiture/ajouter', name: 'app_voiture_ajouter')]
+    #[Route(
+        '/voiture/ajouter',
+        name: 'app_voiture_ajouter',
+        methods: ['GET', 'POST']
+    )]
     public function ajouter(
         Request $request,
-        EntityManagerInterface $entityManager,
-        SluggerInterface $slugger
+        EntityManagerInterface $entityManager
     ): Response {
         $voiture = new Voiture();
 
-        $form = $this->createForm(VoitureType::class, $voiture);
+        $form = $this->createForm(
+            VoitureType::class,
+            $voiture
+        );
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $imageFile = $form->get('image')->getData();
-
-            if ($imageFile !== null) {
-                $originalFilename = pathinfo(
-                    $imageFile->getClientOriginalName(),
-                    PATHINFO_FILENAME
-                );
-
-                $safeFilename = $slugger->slug($originalFilename);
-
-                $newFilename = $safeFilename . '-' . uniqid() . '.' .
-                    $imageFile->guessExtension();
-
-                try {
-                    $imageFile->move(
-                        $this->getParameter('voitures_images_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $exception) {
-                    $this->addFlash(
-                        'error',
-                        'Une erreur est survenue pendant l’envoi de l’image.'
-                    );
-
-                    return $this->render('voitures/ajouter.html.twig', [
-                        'form' => $form,
-                    ]);
-                }
-
-                $voiture->setImage($newFilename);
-            }
-
             $entityManager->persist($voiture);
             $entityManager->flush();
 
@@ -86,7 +60,8 @@ final class VoitureController extends AbstractController
     #[Route(
         '/voiture/{id}',
         name: 'app_voiture_detail',
-        requirements: ['id' => '\d+']
+        requirements: ['id' => '\d+'],
+        methods: ['GET']
     )]
     public function detail(Voiture $voiture): Response
     {
@@ -94,19 +69,24 @@ final class VoitureController extends AbstractController
             'voiture' => $voiture,
         ]);
     }
-    #[Route('/voiture/{id}/supprimer', name: 'app_voiture_supprimer', methods: ['POST'])]
+
+    #[Route(
+        '/voiture/{id}/supprimer',
+        name: 'app_voiture_supprimer',
+        requirements: ['id' => '\d+'],
+        methods: ['GET']
+    )]
     public function supprimer(
         Voiture $voiture,
-        Request $request,
         EntityManagerInterface $entityManager
     ): Response {
-        if ($this->isCsrfTokenValid(
-            'supprimer' . $voiture->getId(),
-            $request->request->get('_token')
-        )) {
-            $entityManager->remove($voiture);
-            $entityManager->flush();
-        }
+        $entityManager->remove($voiture);
+        $entityManager->flush();
+
+        $this->addFlash(
+            'success',
+            'La voiture a été supprimée avec succès.'
+        );
 
         return $this->redirectToRoute('app_accueil');
     }

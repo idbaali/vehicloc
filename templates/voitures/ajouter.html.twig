@@ -1,37 +1,59 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Ajouter une voiture - VehiLoc
+    Ajouter une voiture
 {% endblock %}
 
 {% block body %}
-    <main class="add-car-page">
-        <div class="container">
-            <h1>Ajouter une voiture</h1>
+    <section id="add">
+        <a href="{{ path('app_accueil') }}">
+            ← Retour à l’accueil
+        </a>
 
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-error">
-                    {{ message }}
+        <h1>Ajouter une voiture</h1>
+
+        {{ form_start(form) }}
+
+            <div class="input">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div class="input">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+                {{ form_errors(form.description) }}
+            </div>
+
+            <div class="flex-input">
+                <div class="input">
+                    {{ form_label(form.dailyPrice) }}
+                    {{ form_widget(form.dailyPrice) }}
+                    {{ form_errors(form.dailyPrice) }}
                 </div>
-            {% endfor %}
 
-            {{ form_start(form) }}
+                <div class="input">
+                    {{ form_label(form.monthlyPrice) }}
+                    {{ form_widget(form.monthlyPrice) }}
+                    {{ form_errors(form.monthlyPrice) }}
+                </div>
+            </div>
 
-    {{ form_errors(form) }}
+            <div class="input">
+                {{ form_label(form.places) }}
+                {{ form_widget(form.places) }}
+                {{ form_errors(form.places) }}
+            </div>
 
-    {{ form_row(form.name) }}
-    {{ form_row(form.description) }}
-    {{ form_row(form.dailyPrice) }}
-    {{ form_row(form.monthlyPrice) }}
-    {{ form_row(form.places) }}
-    {{ form_row(form.motor) }}
-    {{ form_row(form.image) }}
+            <div class="checkbox-input">
+                {{ form_widget(form.manual) }}
+                {{ form_label(form.manual) }}
+                {{ form_errors(form.manual) }}
+            </div>
 
-    <button type="submit">
-        Ajouter la voiture
-    </button>
+            {{ form_widget(form.submit) }}
 
-{{ form_end(form) }}
-        </div>
-    </main>
+        {{ form_end(form) }}
+    </section>
 {% endblock %}

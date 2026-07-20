@@ -1,9 +1,102 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détail de la voiture{% endblock %}
+{% block title %}
+    {{ voiture.name }} - Véhicloc
+{% endblock %}
 
 {% block body %}
-<h1>Détail de la voiture</h1>
+    <section id="car">
+        <a href="{{ path('app_accueil') }}">
+            ← Retour aux véhicules
+        </a>
 
-<p>ID : {{ id }}</p>
+        <h1>{{ voiture.name }}</h1>
+
+        <img
+            src="{{ asset('img/car.png') }}"
+            alt="{{ voiture.name }}"
+            class="detail-car-image"
+        >
+
+        <p class="description-car">
+            {{ voiture.description }}
+        </p>
+
+        <div class="advantages">
+            <div class="single-advantage">
+                <img
+                    src="{{ asset('icons/persons.png') }}"
+                    alt=""
+                >
+
+                {{ voiture.places }} places
+            </div>
+
+            <div class="single-advantage">
+                <img
+                    src="{{ asset('icons/motor.png') }}"
+                    alt=""
+                >
+
+                {% if voiture.manual %}
+                    Boîte manuelle
+                {% else %}
+                    Boîte automatique
+                {% endif %}
+            </div>
+
+            <div class="single-advantage">
+                <img
+                    src="{{ asset('icons/km.png') }}"
+                    alt=""
+                >
+
+                Kilométrage illimité
+            </div>
+
+            <div class="single-advantage">
+                Assurance incluse
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="total-rent">
+            <div>
+                <span>
+                    {{ voiture.dailyPrice
+                        |number_format(2, ',', ' ') }}
+                    €
+                </span>
+
+                <p>Prix par jour</p>
+            </div>
+
+            <div>
+                <span>
+                    {{ voiture.monthlyPrice
+                        |number_format(2, ',', ' ') }}
+                    €
+                </span>
+
+                <p>Prix par mois</p>
+            </div>
+        </div>
+
+        <div class="car-detail-actions">
+            
+            <a
+                href="{{ path(
+                    'app_voiture_supprimer',
+                    {id: voiture.id}
+                ) }}"
+                class="detail-delete-button"
+                onclick="return confirm(
+                    'Voulez-vous vraiment supprimer cette voiture ?'
+                );"
+            >
+                Supprimer
+            </a>
+        </div>
+    </section>
 {% endblock %}
