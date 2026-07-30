@@ -91,3 +91,4 @@ class VoitureController extends AbstractController
         return $this->redirectToRoute('app_accueil');
     }
 }
+
